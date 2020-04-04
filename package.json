@@ -13,6 +13,7 @@
     "node-fetch": "2.6.0"
   },
   "devDependencies": {
+    "morgan": "1.10.0",
     "nodemon": "1.18.4"
   },
   "keywords": []

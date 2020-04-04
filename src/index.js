@@ -12,20 +12,33 @@ const app = express();
 console.clear();
 
 app.use(express.json());
+app.use(require("morgan")('dev'));
 
-app.get("/data", async (req, res, next) => {
-  const today = new Date();
-  let json = {};
-  json = await getDataByDate({ date: today, fallback: "yesterday+" });
-  res.json(json);
-});
+app
+  .get("/data", async (req, res, next) => {
+    const today = new Date();
+    let json = {};
+    json = await getDataByDate({ date: today, fallback: "yesterday+" });
+    res.json(json);
+  })
 
-app.get("*", (req, res, next) => {
-  res.send("404");
-});
+  .get("/data/:date", async (req, res, next) => {
+    let date = req.params['date'].split('-'); //DD-MM-AAAA
+    let dateISO = new Date(date[2], date[1] - 1, date[0]);
+    let json = {};
+    json = await getDataByDate({ date: dateISO });
+    res.json({ ...json, dateISO });
+  })
+
+  .get("*", (req, res, next) => {
+    res.send("404");
+  });
 
 let port = process.env.EXPRESS_PORT || 8080;
-http.createServer(app).listen(port); //the server object listens on port 8080
+http.createServer(app).listen(port, () => {
+  console.log(`http://localhost:${port}`)
+}); //the server object listens on port 8080
+
 
 async function getDataByDate({ date, fallback }) {
   const dataSourceURL = process.env.COVID19_DATA_URL;
@@ -51,8 +64,10 @@ async function getDataByDate({ date, fallback }) {
       quote: '"'
     };
     json.data = csvjson.toArray(content.toString(), options);
+
     if (json.data.length <= 1) {
-      if (fallback.includes("yesterday")) {
+      console.log({ fallback })
+      if (fallback && fallback.includes("yesterday")) {
         let yesterday = new Date(date);
         yesterday.setDate(date.getDate() - 1);
         let options = { date: yesterday };
@@ -68,8 +83,7 @@ async function getDataByDate({ date, fallback }) {
     json.data = JSON.parse(
       fs.readFileSync(cacheFullname, { enconding: "utf8" }).toString()
     );
-    json.cacheExists = cacheExists;
-    json.total = json.data.length;
+    json.total = json.data.data.length;
     json.file = cacheFullname;
     json.cached = true;
   }
