@@ -1,20 +1,43 @@
+const express = require("express");
 const http = require("http");
-const csvjson = require("csvjson");
-const fetch = require("node-fetch");
-const fs = require("fs");
-const path = require("path");
+const path = require('path');
 
 require("dotenv").config();
 
-const express = require("express");
+const { getDataByDate } = require('./utils/Data');
+
 const app = express();
 
 console.clear();
 
-app.use(express.json());
-app.use(require("morgan")('dev'));
+app
+  .use(express.json())
+  .use(require("morgan")('dev'))
+  .use('/static', express.static(path.join(__dirname, '../public')));
 
 app
+  .get('/', (req, res, next) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  })
+
+  .get('/dates', (req, res, next) => {
+    let data = [];
+    let today = new Date();
+    let initDate = new Date(2020, 0, 22);
+    let diff = ~~((today - initDate) / 1000 / 3600 / 24);
+
+    let date = new Date(today);
+    for (let i = 0; i <= diff; i++) {
+
+      let dateArr = date.toLocaleDateString('es-CO').split('-');
+      let dateString = `${('0' + dateArr[2]).substr(-2)}-${('0' + dateArr[1]).substr(-2)}-${dateArr[0]}`;
+      data.push(dateString);
+      date.setDate(date.getDate() - 1);
+    }
+
+    res.json({ today, initDate, diff, data })
+  })
+
   .get("/data", async (req, res, next) => {
     const today = new Date();
     let json = {};
@@ -38,54 +61,3 @@ let port = process.env.EXPRESS_PORT || 8080;
 http.createServer(app).listen(port, () => {
   console.log(`http://localhost:${port}`)
 }); //the server object listens on port 8080
-
-
-async function getDataByDate({ date, fallback }) {
-  const dataSourceURL = process.env.COVID19_DATA_URL;
-  const cacheSourceDir = path.resolve(__dirname, `../public/data/cache`);
-  const filename =
-    `0${date.getMonth() + 1}`.substr(-2) +
-    "-" +
-    `0${date.getDate()}`.substr(-2) +
-    "-" +
-    `0${date.getFullYear()}`.substr(-4);
-
-  let cacheFullname = `${cacheSourceDir}/${filename}.csv`;
-
-  let cacheExists = fs.existsSync(cacheFullname);
-
-  let json = {};
-
-  if (!cacheExists) {
-    let fileFullname = `${dataSourceURL}/${filename}.csv`;
-    const content = await fetch(`${fileFullname}`).then(rslt => rslt.text());
-    var options = {
-      delimiter: ",",
-      quote: '"'
-    };
-    json.data = csvjson.toArray(content.toString(), options);
-
-    if (json.data.length <= 1) {
-      console.log({ fallback })
-      if (fallback && fallback.includes("yesterday")) {
-        let yesterday = new Date(date);
-        yesterday.setDate(date.getDate() - 1);
-        let options = { date: yesterday };
-        if (fallback.includes("+")) {
-          options.fallback = "yesterday";
-        }
-        let json = await getDataByDate(options);
-        return json;
-      }
-    }
-    fs.writeFileSync(cacheFullname, JSON.stringify(json));
-  } else {
-    json.data = JSON.parse(
-      fs.readFileSync(cacheFullname, { enconding: "utf8" }).toString()
-    );
-    json.total = json.data.data.length;
-    json.file = cacheFullname;
-    json.cached = true;
-  }
-  return json;
-}
