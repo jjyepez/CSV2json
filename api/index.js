@@ -13,7 +13,7 @@ console.clear();
 app
   .use(express.json())
   .use(require("morgan")('dev'))
-  .use('/static', express.static(path.join(__dirname, '../public')));
+  .use('/', express.static(path.join(__dirname, '../public')));
 
 app
   .get('/', (req, res, next) => {

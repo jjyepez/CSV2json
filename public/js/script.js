@@ -1,7 +1,7 @@
 (async () => await init())();
 
 async function init() {
-    let json = await fetch('//dates').then(rslt => rslt.json());
+    let json = await fetch('/dates').then(rslt => rslt.json());
     let dates = json.data || [];
     let selectDates = document.getElementById('selectDates');
     dates.forEach(date => {
@@ -14,7 +14,7 @@ async function init() {
         let lista = this;
         let selectedDate = lista.options[lista.selectedIndex].value;
 
-        const urlEndpoint = `//data/${selectedDate}`;
+        const urlEndpoint = `/data/${selectedDate}`;
         const json = await fetch(urlEndpoint).then(rslt => rslt.json());
 
         document.getElementById('data').innerText = JSON.stringify(json.data);
