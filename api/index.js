@@ -20,7 +20,7 @@ app
     res.sendFile(path.join(__dirname, '../public/index.html'));
   })
 
-  .get('/dates', (req, res, next) => {
+  .get('/api/dates', (req, res, next) => {
     let data = [];
     let today = new Date();
     let initDate = new Date(2020, 0, 22);
@@ -38,14 +38,14 @@ app
     res.json({ today, initDate, diff, data })
   })
 
-  .get("/data", async (req, res, next) => {
+  .get("/api/data", async (req, res, next) => {
     const today = new Date();
     let json = {};
     json = await getDataByDate({ date: today, fallback: "yesterday+" });
     res.json(json);
   })
 
-  .get("/data/:date", async (req, res, next) => {
+  .get("/api/data/:date", async (req, res, next) => {
     let date = req.params['date'].split('-'); //DD-MM-AAAA
     let dateISO = new Date(date[2], date[1] - 1, date[0]);
     let json = {};
