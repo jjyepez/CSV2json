@@ -20,7 +20,7 @@ app.get("/data", async (req, res, next) => {
   res.json(json);
 });
 
-app.get("/", (req, res, next) => {
+app.get("*", (req, res, next) => {
   res.send("404");
 });
 
@@ -28,7 +28,7 @@ let port = process.env.EXPRESS_PORT || 8080;
 http.createServer(app).listen(port); //the server object listens on port 8080
 
 async function getDataByDate({ date, fallback }) {
-  const dataSourceURL = `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports`;
+  const dataSourceURL = process.env.COVID19_DATA_URL;
   const cacheSourceDir = path.resolve(__dirname, `../public/data/cache`);
   const filename =
     `0${date.getMonth() + 1}`.substr(-2) +
