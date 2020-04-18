@@ -42,26 +42,50 @@ async function init() {
 
         let calcActives = function (current) {
             if (
-                typeof total == 'undefined' ||
-                typeof total[selectedDate] == 'undefined' ||
-                typeof total[selectedDate][current[0]] == 'undefined'
+                typeof totalA == 'undefined' ||
+                typeof totalA[selectedDate] == 'undefined' ||
+                typeof totalA[selectedDate][current[0]] == 'undefined'
             ) {
-                total = {};
-                total[selectedDate] = {};
-                total[selectedDate][current[0]] = 0;
+                totalA = {};
+                totalA[selectedDate] = {};
+                totalA[selectedDate][current[0]] = 0;
             }
-            total[selectedDate][current[0]] +=
+            totalA[selectedDate][current[0]] +=
                 parseFloat(current[1]) -
                 parseFloat(current[2]) -
                 parseFloat(current[3]);
 
-            return total[selectedDate][current[0]];
+            return totalA[selectedDate][current[0]];
         };
-        let calcDiffDeaths = 0; //function (prev, current) { return parseFloat(current[2]) - parseFloat(prev[2]) };
+        let calcDiffDeaths = function (prev, current) {
+            if (
+                typeof totalB == 'undefined' ||
+                typeof totalB[selectedDate] == 'undefined' ||
+                typeof totalB[selectedDate][current[0]] == 'undefined'
+            ) {
+                totalB = {};
+                totalB[selectedDate] = {};
+                totalB[selectedDate][current[0]] = 0;
+
+                totalC = {};
+                totalC[selectedDate] = {};
+                totalC[selectedDate][current[0]] = 0;
+            }
+            totalB[selectedDate][current[0]] += parseFloat(current[2]);
+            if (prev[0] === current[0]) {
+                totalC[selectedDate][current[0]] += parseFloat(prev[2]);
+            }
+
+            let total =
+                totalB[selectedDate][current[0]] -
+                totalC[selectedDate][current[0]];
+            return total;
+        };
         let calcDiffConfirm = 0; //function (prev, current) { return parseFloat(current[1]) - parseFloat(prev[1]) };
         let calcDiffRecovered = 0; //function (prev, current) { return parseFloat(current[3]) - parseFloat(prev[3]) };
+        let calcDiffActive = 0;
 
-        //jsonData = arrayFilterBy(jsonData, 0, 'US');
+        jsonData = arrayFilterBy(jsonData, 0, ['Canada', 'US', 'Mexico']);
 
         // ordenar por país
         jsonData.sort((a, b) => {
@@ -78,6 +102,7 @@ async function init() {
             calcDiffConfirm,
             calcDiffDeaths,
             calcDiffRecovered,
+            calcDiffActive,
         ]);
 
         window.data = jsonData;
@@ -124,7 +149,7 @@ function getArgs(func) {
 }
 
 function arrayFilterBy(arrayIn, id, filterStr) {
-    return arrayIn.filter((item) => item[id] === filterStr);
+    return arrayIn.filter((item) => filterStr.includes(item[id]));
 }
 
 function arrayGroupBy(arrayIn, id, aggIds = []) {
@@ -187,6 +212,7 @@ function json2table({ json, selector, callback }) {
         <th>Confirmed Diff</th>
         <th>Deaths Diff</th>
         <th>Recovered Diff</th>
+        <th>Active Diff</th>
         </tr>
     `;
     table.setAttribute('id', `${selector}__DataTable`);

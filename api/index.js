@@ -1,6 +1,8 @@
 const express = require('express');
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
+const csvjson = require('csvjson');
 
 require('dotenv').config();
 
@@ -51,6 +53,78 @@ app.get('/', (req, res, next) => {
         let json = {};
         json = await getDataByDate({ date: today, fallback: 'yesterday+' });
         res.json(json);
+    })
+
+    .get('/api/countries', async (req, res, next) => {
+        let countriesCSVfile = path.join(
+            __dirname,
+            '../public/data/lists/countries-ISO.csv'
+        );
+        let content = fs.readFileSync(countriesCSVfile);
+        var options = {
+            delimiter: '\t',
+            quote: '"',
+        };
+        let dataRaw = csvjson.toObject(content.toString(), options);
+        let dataNormalized = {};
+        dataRaw.forEach((country) => {
+            dataNormalized[country['Código Alfa-3']] = country;
+        });
+        res.json({
+            source: `https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.csv`,
+            local: countriesCSVfile,
+            raw: dataRaw,
+            data: dataNormalized,
+            total: dataRaw.length,
+        });
+    })
+
+    .get('/api/countries/extras', async (req, res, next) => {
+        let countriesCSVfile = path.join(
+            __dirname,
+            '../public/data/lists/countries.csv'
+        );
+        let content = fs.readFileSync(countriesCSVfile);
+        var options = {
+            delimiter: ',',
+            quote: '"',
+        };
+        let dataRaw = csvjson.toObject(content.toString(), options);
+        let dataNormalized = {};
+        dataRaw.forEach((country) => {
+            dataNormalized[country['alpha-3']] = country;
+        });
+        res.json({
+            source: `https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.csv`,
+            local: countriesCSVfile,
+            raw: dataRaw,
+            data: dataNormalized,
+            total: dataRaw.length,
+        });
+    })
+
+    .get('/api/countries/coords', async (req, res, next) => {
+        let countriesCSVfile = path.join(
+            __dirname,
+            '../public/data/lists/countries_coords.csv'
+        );
+        let content = fs.readFileSync(countriesCSVfile);
+        var options = {
+            delimiter: '\t',
+            quote: '"',
+        };
+        let dataRaw = csvjson.toObject(content.toString(), options);
+        let dataNormalized = {};
+        dataRaw.forEach((country) => {
+            dataNormalized[country['country']] = country;
+        });
+        res.json({
+            source: `https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.csv`,
+            local: countriesCSVfile,
+            raw: dataRaw,
+            data: dataNormalized,
+            total: dataRaw.length,
+        });
     })
 
     .get('*', (req, res, next) => {

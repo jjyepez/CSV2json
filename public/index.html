@@ -1,38 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>CSV</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.1.0/antd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.1.0/compact-theme.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.1.0/antd.compact.min.css"
+        />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>CSV</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.1.0/antd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.1.0/compact-theme.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.1.0/antd.compact.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous"
+        />
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link
+            rel="stylesheet"
+            href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"
+        />
+        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
 
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
-  <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css"
+        />
+        <link rel="stylesheet" href="./css/style.css" />
+        <!--link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css"-->
+    </head>
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css">
-  <link rel="stylesheet" href="./css/style.css">
-  <!--link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css"-->
-</head>
-
-<body>
-  <span>
-    <label>Fecha:</label>
-    <select id='selectDates'>
-      <option disabled selected>Seleccione una fecha ...</option>
-    </select>
-  </span>
-  <div id='data'></div>
-  <script src='/js/script.js' type='text/javascript'></script>
-</body>
-
+    <body>
+        <div class="row">
+            <div class="col-3">
+                <label>Fecha:</label>
+                <select id="selectDates">
+                    <option disabled selected>Seleccione una fecha ...</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <label>Región:</label>
+                <select id="selectRegion">
+                    <option disabled selected>Seleccione una región ...</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <label>País:</label>
+                <select id="selectCountry">
+                    <option disabled selected>Seleccione un país ...</option>
+                </select>
+            </div>
+        </div>
+        <div id="data"></div>
+        <script src="/js/script.js" type="text/javascript"></script>
+    </body>
 </html>
